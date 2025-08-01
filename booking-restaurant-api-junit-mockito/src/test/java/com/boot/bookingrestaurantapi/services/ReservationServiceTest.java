@@ -152,10 +152,12 @@ public class ReservationServiceTest {
     }
 
     @Test(expected = BookingException.class)
-    public void createReservationNoSaveTestError() throws BookingException {
+    public void createReservationInternalServerTestError() throws BookingException {
         Mockito.when(restaurantRepository.findById(RESTAURANT_ID)).thenReturn(OPTIONAL_RESTAURANT);
         Mockito.when(turnRepository.findById(TURN_ID)).thenReturn(OPTIONAL_TURN);
-        Mockito.when(reservationRespository.findByTurnAndRestaurantId(TURN.getName(), RESTAURANT.getId())).thenReturn(Optional.of(RESERVATION));
+        Mockito.when(reservationRespository.findByTurnAndRestaurantId(TURN.getName(), RESTAURANT.getId())).thenReturn(OPTIONAL_RESERVATION_EMPTY);
+        Mockito.doThrow(Exception.class).when(reservationRespository).save(Mockito.any(Reservation.class));
+
         reservationService.createReservation(CREATE_RESERVATION_REST);
         fail();
     }
